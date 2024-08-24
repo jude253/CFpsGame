@@ -1,7 +1,7 @@
 #pragma once
 
-#define SCREEN_WIDTH   1280 / 2
-#define SCREEN_HEIGHT  720 / 2
+#define SCREEN_WIDTH   1280
+#define SCREEN_HEIGHT  720
 
 #define SCREEN_DIVISOR 10
 #define GRID_HEIGHT SCREEN_HEIGHT / SCREEN_DIVISOR

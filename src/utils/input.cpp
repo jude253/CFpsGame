@@ -1,6 +1,5 @@
 #include <SDL.h>
 #include "init.h"
-#include "gameObjects/clickSquare.h"
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
@@ -32,7 +31,6 @@ void doInput(void)
                 SDL_Log("Mouse position: x=%i y=%i",
                     app.mousePosition.x, app.mousePosition.y
                 );
-                deleteClickSquareIfClicked();
                 break;
             default:
                 break;

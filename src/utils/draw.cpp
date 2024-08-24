@@ -4,7 +4,6 @@
 #include "drawHelperFunctions.h"
 #include "defs.h"
 #include "input.h"
-#include "gameObjects/clickSquare.h"
 #include <string>
 
 void drawDebugGrid(void) {
@@ -80,12 +79,6 @@ void renderFPS(void) {
     renderText(0, SCREEN_HEIGHT-GRID_HEIGHT, writeOnScreen);
 }
 
-void renderSquaresClicked(void) {
-    std::string writeOnScreen ="Squares Clicked=";
-    writeOnScreen.append(std::to_string((int)app.squaresClickedCount));
-    renderText(0, 0, writeOnScreen);
-}
-
 void presentScene(void)
 {   
     drawDebugGrid();
@@ -97,13 +90,6 @@ void presentScene(void)
     mouse_rect.h = 10;
 
     SDL_RenderDrawRect(app.renderer, &mouse_rect);
-    
-    for (int i = 0; i < CLICK_SQUARES_LIST.size(); i++) {
-        ClickSquare cs = CLICK_SQUARES_LIST[i];
-        drawClickSquare(app, cs);
-    }
-    drawBorder();
     renderFPS();
-    renderSquaresClicked();
     SDL_RenderPresent(app.renderer);
 }

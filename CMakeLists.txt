@@ -4,7 +4,7 @@ if(${CMAKE_CURRENT_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
-project(CGameSandbox VERSION 0.1.0 LANGUAGES C CXX)
+project(CFpsGame VERSION 0.1.0 LANGUAGES C CXX)
 set(EXECUTABLE_NAME "game" CACHE STRING "EXECUTABLE_NAME")
 
 # specify the C++ standard
@@ -38,7 +38,7 @@ if (NOT USE_EMSCRIPTEN)
   message("SDL2_INCLUDE_DIRS: ${SDL2_INCLUDE_DIRS}")
   message("SDL2_ttf_INCLUDE_DIRS: ${SDL2_ttf_INCLUDE_DIRS}")
 
-  include_directories(CGameSandbox ${SDL2_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
+  include_directories(CFpsGame ${SDL2_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
 
   add_executable(${EXECUTABLE_NAME} ${CPP_SOURCE})
   target_link_libraries(${EXECUTABLE_NAME} PRIVATE SDL2::SDL2 SDL2_ttf::SDL2_ttf)
@@ -79,7 +79,7 @@ else()
     COMMAND ${EMCC} ${CPP_SOURCE} --use-port=sdl2 --use-port=sdl2_ttf --embed-file=${PROJECT_ROOT_DIR}/${FONT_RELATIVE_PATH}@/${FONT_RELATIVE_PATH} -o ${DIST_DIR}/${EXECUTABLE_NAME}.html
     VERBATIM
   )
-  add_custom_target(CGameSandbox
+  add_custom_target(CFpsGame
     ALL DEPENDS
     ${EXECUTABLE_NAME}.html
     ${EXECUTABLE_NAME}.js

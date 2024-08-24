@@ -129,25 +129,33 @@ void renderLineOn2dMap(SDL_Point pt1, SDL_Point pt2, float xScale, float yScale)
 
 void presentScene(void)
 {   
-    // Use screen coordinates.
+    // Use 3d coordinates as base, so everything is in reference to 3d location.
     SDL_Point playerLocationScreen = {.x = 800, .y = 200 };
     SDL_Point mouseLocationScreen = {.x = app.mousePosition.x, .y = app.mousePosition.y };
 
-    
-    float xScaleScreenToScreen = 1.0;
-    float yScaleScreenToScreen = 1.0;
 
-    float xScaleScreenToMiniMap = (float)CELL_3D_EDGE_SIZE*(float)CELL_2D_EDGE_SIZE/(float)CELL_2D_WIDTH_FTS_SIZE;
-    float yScaleScreenToMiniMap = (float)CELL_3D_EDGE_SIZE*(float)CELL_2D_EDGE_SIZE/(float)CELL_2D_HEIGHT_FTS_SIZE;
+    // TODO: Make these macros potentially
+    float xScaleScreenTo3dMap = (float)CELL_3D_EDGE_SIZE*(float)MAP_WIDTH/(float)SCREEN_WIDTH;
+    float yScaleScreenTo3dMap = (float)CELL_3D_EDGE_SIZE*(float)MAP_HEIGHT/(float)SCREEN_HEIGHT;
+
+    float xScale3dMapToScreen = (float)SCREEN_WIDTH/((float)CELL_3D_EDGE_SIZE*(float)MAP_WIDTH);
+    float yScale3dMapToScreen = (float)SCREEN_HEIGHT/((float)CELL_3D_EDGE_SIZE*(float)MAP_HEIGHT);
+
+    float xScale3dMapTo2dMiniMap = (float)CELL_2D_EDGE_SIZE/(float)CELL_3D_EDGE_SIZE;
+    float yScale3dMapTo2dMiniMap = (float)CELL_2D_EDGE_SIZE/(float)CELL_3D_EDGE_SIZE;
+
+    // TODO: Store player location in app.
+    SDL_Point playerLocation3dMap = createScaledPoint(playerLocationScreen, xScaleScreenTo3dMap, yScaleScreenTo3dMap);
+    SDL_Point mouseLocation3dMap = createScaledPoint(mouseLocationScreen, xScaleScreenTo3dMap, yScaleScreenTo3dMap);
 
     renderMap2dRepresentationFitToScreen(map2dRepresentation);
-    renderPlayerOn2dMap(playerLocationScreen, xScaleScreenToScreen, yScaleScreenToScreen, 10, 10);
+    renderPlayerOn2dMap(playerLocation3dMap, xScale3dMapToScreen, yScale3dMapToScreen, 10, 10);
 
-    renderLineOn2dMap(playerLocationScreen, mouseLocationScreen, xScaleScreenToScreen, yScaleScreenToScreen);
+    renderLineOn2dMap(playerLocation3dMap, mouseLocation3dMap, xScale3dMapToScreen, yScale3dMapToScreen);
 
     renderMap2dRepresentation(map2dRepresentation);
-    renderPlayerOn2dMap(playerLocationScreen, xScaleScreenToMiniMap, yScaleScreenToMiniMap, 2, 2);
-    renderLineOn2dMap(playerLocationScreen, mouseLocationScreen, xScaleScreenToMiniMap, yScaleScreenToMiniMap);
+    renderPlayerOn2dMap(playerLocation3dMap, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, 4, 4);
+    renderLineOn2dMap(playerLocation3dMap, mouseLocation3dMap, xScale3dMapTo2dMiniMap, yScale3dMapTo2dMiniMap);
 
     renderMouseRect();
 

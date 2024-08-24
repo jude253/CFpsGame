@@ -1,0 +1,6 @@
+[submodule "include/emsdk"]
+	path = include/emsdk
+	url = https://github.com/emscripten-core/emsdk
+[submodule "include/adobe-fonts/source-code-pro"]
+	path = include/adobe-fonts/source-code-pro
+	url = https://github.com/adobe-fonts/source-code-pro

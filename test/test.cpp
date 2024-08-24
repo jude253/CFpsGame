@@ -62,7 +62,7 @@ char mapRepresentation[10][10] = {
     {'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
 };
 
-int main() {
+void testMap(void) {
     Map map;
 
     map.width = 10;
@@ -75,5 +75,18 @@ int main() {
         }
         std::cout << '\n';
     }
+}
+
+int main() {
+
+    int x = 650;
+    int length = 100;
+    int scaling = 72;
+
+    std::cout << x/length << '\n';
+    std::cout << (float)x/(float)length << '\n';
+    std::cout << (float)x/(float)length*scaling << '\n';
+    std::cout << x/length*scaling << '\n';
+
     return 0;
 }

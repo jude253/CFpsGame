@@ -5,6 +5,7 @@
 #include "defs.h"
 #include "input.h"
 #include <string>
+#include <iostream>
 
 void prepareScene(void)
 {
@@ -67,21 +68,71 @@ void renderMap2dRepresentation(char map2dRepresentation[MAP_HEIGHT][MAP_WIDTH]) 
                 setRenderDrawColor(WHITE);
             
             SDL_Rect mapCell;
-            mapCell.x = i*10;
-            mapCell.y = j*10;
-            mapCell.w = 10;
-            mapCell.h = 10;
+            mapCell.x = i*CELL_2D_EDGE_SIZE;
+            mapCell.y = j*CELL_2D_EDGE_SIZE;
+            mapCell.w = CELL_2D_EDGE_SIZE;
+            mapCell.h = CELL_2D_EDGE_SIZE;
             SDL_RenderDrawRect(app.renderer, &mapCell);
         }
     }
+}
 
+void renderMap2dRepresentationFitToScreen(char map2dRepresentation[MAP_HEIGHT][MAP_WIDTH]) {
+    for (int i = 0; i < MAP_HEIGHT; i++) {
+        for (int j = 0; j < MAP_WIDTH; j++){
+            if (map2dRepresentation[i][j] == 'X')
+                setRenderDrawColor(BLACK);
+            else
+                setRenderDrawColor(WHITE);
+            
+            SDL_Rect mapCell;
+            mapCell.x = i*CELL_2D_WIDTH_FTS_SIZE;
+            mapCell.y = j*CELL_2D_HEIGHT_FTS_SIZE;
+            mapCell.w = CELL_2D_WIDTH_FTS_SIZE;
+            mapCell.h = CELL_2D_HEIGHT_FTS_SIZE;
+            SDL_RenderDrawRect(app.renderer, &mapCell);
+        }
+    }
+}
+
+/*
+x and y are intended to be relative to the 3D grid coordinate system,
+and are scaled accordingly.
+*/
+void renderPlayerOn2dMap(int x, int y, int xScale, int yScale) {
+    SDL_Rect playerLocation;
+    playerLocation.x = (int)((float)x/(float)CELL_3D_EDGE_SIZE*xScale) - 5;
+    playerLocation.y = (int)((float)y/(float)CELL_3D_EDGE_SIZE*yScale) - 5;
+    playerLocation.w = 10;
+    playerLocation.h = 10;
+
+    setRenderDrawColor(RED);
+    SDL_RenderFillRect(app.renderer, &playerLocation);
+}
+
+void renderPlayerMouseLineOn2dMap(int playerX, int playerY, int xScale, int yScale) {
+    SDL_Rect playerLocation;
+    int scaledPlayerX = (int)((float)playerX/(float)CELL_3D_EDGE_SIZE*xScale);
+    int scaledPlayerY = (int)((float)playerY/(float)CELL_3D_EDGE_SIZE*yScale);
+
+    setRenderDrawColor(GREEN);
+    SDL_RenderDrawLine(
+        app.renderer,
+        scaledPlayerX, scaledPlayerY,
+        app.mousePosition.x, app.mousePosition.y
+    );
 }
 
 void presentScene(void)
 {   
+    int playerX = 650;
+    int playerY = 850;
+
+    renderMap2dRepresentationFitToScreen(map2dRepresentation);
+    renderPlayerOn2dMap(playerX, playerY, CELL_2D_WIDTH_FTS_SIZE, CELL_2D_HEIGHT_FTS_SIZE);
     renderMouseRect();
 
-    renderMap2dRepresentation(map2dRepresentation);
+    renderPlayerMouseLineOn2dMap(playerX, playerY, CELL_2D_WIDTH_FTS_SIZE, CELL_2D_HEIGHT_FTS_SIZE);
 
     renderFPS();
 

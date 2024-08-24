@@ -4,6 +4,7 @@
 #include "drawHelperFunctions.h"
 #include "defs.h"
 #include "input.h"
+#include "math.h"
 #include <string>
 #include <iostream>
 
@@ -116,10 +117,10 @@ void renderPlayerOn2dMap(SDL_Point playerLocation, float xScale, float yScale, i
 }
 
 /* x and y are intended to be scaled to allow different representations. */
-void renderLineOn2dMap(SDL_Point pt1, SDL_Point pt2, float xScale, float yScale) {
+void renderLineOn2dMap(SDL_Point pt1, SDL_Point pt2, float xScale, float yScale, Color color) {
     SDL_Point scaledPt1 = createScaledPoint(pt1, xScale, yScale);
     SDL_Point scaledPt2 = createScaledPoint(pt2, xScale, yScale);
-    setRenderDrawColor(GREEN);
+    setRenderDrawColor(color);
     SDL_RenderDrawLine(
         app.renderer,
         scaledPt1.x, scaledPt1.y,
@@ -151,12 +152,38 @@ void presentScene(void)
     renderMap2dRepresentationFitToScreen(map2dRepresentation);
     renderPlayerOn2dMap(playerLocation3dMap, xScale3dMapToScreen, yScale3dMapToScreen, 10, 10);
 
-    renderLineOn2dMap(playerLocation3dMap, mouseLocation3dMap, xScale3dMapToScreen, yScale3dMapToScreen);
+    renderLineOn2dMap(playerLocation3dMap, mouseLocation3dMap, xScale3dMapToScreen, yScale3dMapToScreen, GREEN);
 
+    double slope = (
+        (double)(playerLocation3dMap.y - mouseLocation3dMap.y)/
+        (double)(playerLocation3dMap.x - mouseLocation3dMap.x)
+    );
+
+    double maxFovSlope = tan(atan(slope) + HALF_FOV_RADIANS);
+    double minFovSlope = tan(atan(slope) - HALF_FOV_RADIANS);
+
+    // For now leave the endpoints of the line 0 and max width b/c will change later.
+    int yMaxFovSlopeX0 = (int)(maxFovSlope*(0 - playerLocation3dMap.x) + playerLocation3dMap.y);
+    int yMaxFovSlopeXMax = (int)(maxFovSlope*(CELL_3D_EDGE_SIZE*MAP_WIDTH - playerLocation3dMap.x) + playerLocation3dMap.y);
+    
+    int yMinFovSlopeX0 = (int)(minFovSlope*(0 - playerLocation3dMap.x) + playerLocation3dMap.y);
+    int yMinFovSlopeXMax = (int)(minFovSlope*(CELL_3D_EDGE_SIZE*MAP_WIDTH - playerLocation3dMap.x) + playerLocation3dMap.y);
+
+    SDL_Point maxFovSlopeX0 = {.x=0, .y=yMaxFovSlopeX0};
+    SDL_Point maxFovSlopeXMax = {.x=CELL_3D_EDGE_SIZE*MAP_WIDTH, .y=yMaxFovSlopeXMax};
+
+    SDL_Point minFovSlopeX0 = {.x=0, .y=yMinFovSlopeX0};
+    SDL_Point minFovSlopeXMax = {.x=CELL_3D_EDGE_SIZE*MAP_WIDTH, .y=yMinFovSlopeXMax};
+
+    renderLineOn2dMap(maxFovSlopeX0, maxFovSlopeXMax, xScale3dMapToScreen, yScale3dMapToScreen, BLUE);
+    renderLineOn2dMap(minFovSlopeX0, minFovSlopeXMax, xScale3dMapToScreen, yScale3dMapToScreen, BLUE);
+    
     renderMap2dRepresentation(map2dRepresentation);
     renderPlayerOn2dMap(playerLocation3dMap, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, 4, 4);
-    renderLineOn2dMap(playerLocation3dMap, mouseLocation3dMap, xScale3dMapTo2dMiniMap, yScale3dMapTo2dMiniMap);
+    renderLineOn2dMap(playerLocation3dMap, mouseLocation3dMap, xScale3dMapTo2dMiniMap, yScale3dMapTo2dMiniMap, GREEN);
 
+    renderLineOn2dMap(maxFovSlopeX0, maxFovSlopeXMax, xScale3dMapTo2dMiniMap, yScale3dMapTo2dMiniMap, BLUE);
+    renderLineOn2dMap(minFovSlopeX0, minFovSlopeXMax, xScale3dMapTo2dMiniMap, yScale3dMapTo2dMiniMap, BLUE);
     renderMouseRect();
 
     renderFPS();

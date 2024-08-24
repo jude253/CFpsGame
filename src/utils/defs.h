@@ -18,3 +18,8 @@
 
 
 #define DEFAULT_FONT_PTSIZE 24 //point size to use for font.
+
+#define PI 3.1415926535
+#define FOV_DEGREES 60.0
+#define FOV_RADIANS FOV_DEGREES*PI/180
+#define HALF_FOV_RADIANS FOV_RADIANS/2.0

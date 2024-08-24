@@ -23,3 +23,7 @@
 #define FOV_DEGREES 60.0
 #define FOV_RADIANS FOV_DEGREES*PI/180
 #define HALF_FOV_RADIANS FOV_RADIANS/2.0
+
+
+#define PLAYER_MOVE_3D_STEP 10  // In game 3d grid distance units
+#define PLAYER_ROTATE_3D_STEP PI/8.0  // Radians

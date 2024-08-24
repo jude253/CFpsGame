@@ -29,6 +29,9 @@ void initSDL(void)
     app.renderFrameSeconds = 0.0f;
     app.fps = 0.0f;
 
+    app.playerPosition3dMap = {.x = 850, .y = 200};
+    app.playerAngle = 0.0;
+
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         printf("Couldn't initialize SDL: %s\n", SDL_GetError());

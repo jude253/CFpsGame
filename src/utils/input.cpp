@@ -3,6 +3,8 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
+#include <iostream>
+#include "defs.h"
 
 
 
@@ -31,6 +33,34 @@ void doInput(void)
                 SDL_Log("Mouse position: x=%i y=%i",
                     app.mousePosition.x, app.mousePosition.y
                 );
+                break;
+            case SDL_KEYDOWN:
+                switch (event.key.keysym.sym)
+                {
+                // ROTATION
+                case SDLK_LEFT:
+                        app.playerAngle -= PLAYER_ROTATE_3D_STEP;
+                    break;
+                case SDLK_RIGHT:
+                        app.playerAngle += PLAYER_ROTATE_3D_STEP;
+                    break;
+                
+                // MOVEMENT
+                case SDLK_w:
+                        app.playerPosition3dMap.y -= PLAYER_MOVE_3D_STEP;
+                    break;
+                case SDLK_a:
+                        app.playerPosition3dMap.x -= PLAYER_MOVE_3D_STEP;
+                    break;
+                case SDLK_s:
+                        app.playerPosition3dMap.y += PLAYER_MOVE_3D_STEP;
+                    break;
+                case SDLK_d:
+                        app.playerPosition3dMap.x += PLAYER_MOVE_3D_STEP;
+                    break;
+                default:
+                    break;
+                }
                 break;
             default:
                 break;

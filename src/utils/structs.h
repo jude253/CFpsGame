@@ -11,6 +11,8 @@ typedef struct {
     float renderFrameSeconds;  // Seconds to render current frame
     float fps;  // FPS calculated from previous frame start to current frame start
     SDL_Point mousePosition;
+    SDL_Point playerPosition3dMap;  // Player location relative to the 3d coordinate grid system.
+    double playerAngle;  // Radians
 } App;
 
 typedef struct {

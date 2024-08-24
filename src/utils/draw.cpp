@@ -147,26 +147,41 @@ void presentScene(void)
 
     SDL_Point playerLocation3dMap = app.playerPosition3dMap;
 
-    renderMap2dRepresentationFitToScreen(map2dRepresentation);
-    renderPlayerOn2dMap(playerLocation3dMap, xScale3dMapToScreen, yScale3dMapToScreen, 10, 10);
 
     double playerAngle = app.playerAngle;
     double slope = tan(app.playerAngle);
 
     SDL_Point playerUnitVectorFrom3dMapLocation = {
-        .x = (int) (100 * cos(playerAngle) + (double) playerLocation3dMap.x), 
-        .y = (int) (100 * sin(playerAngle) + (double) playerLocation3dMap.y)
-    }; 
+        .x = (int) (CELL_3D_EDGE_SIZE * cos(playerAngle) + (double) playerLocation3dMap.x), 
+        .y = (int) (CELL_3D_EDGE_SIZE * sin(playerAngle) + (double) playerLocation3dMap.y)
+    };
+
+    double maxFovAngle = playerAngle + HALF_FOV_RADIANS;
+    double minFovAngle = playerAngle - HALF_FOV_RADIANS;
+
+    SDL_Point playerMaxFovAngleUnitVectorFrom3dMapLocation = {
+        .x = (int) (CELL_3D_EDGE_SIZE * cos(maxFovAngle) + (double) playerLocation3dMap.x), 
+        .y = (int) (CELL_3D_EDGE_SIZE * sin(maxFovAngle) + (double) playerLocation3dMap.y)
+    };
+
+    SDL_Point playerMinFovAngleUnitVectorFrom3dMapLocation = {
+        .x = (int) (CELL_3D_EDGE_SIZE * cos(minFovAngle) + (double) playerLocation3dMap.x), 
+        .y = (int) (CELL_3D_EDGE_SIZE * sin(minFovAngle) + (double) playerLocation3dMap.y)
+    };
 
 
+    renderMap2dRepresentationFitToScreen(map2dRepresentation);
+    renderPlayerOn2dMap(playerLocation3dMap, xScale3dMapToScreen, yScale3dMapToScreen, 10, 10);
     renderLineOn2dMap(playerLocation3dMap, playerUnitVectorFrom3dMapLocation, xScale3dMapToScreen, yScale3dMapToScreen, DARK_RED);
+    renderLineOn2dMap(playerLocation3dMap, playerMaxFovAngleUnitVectorFrom3dMapLocation, xScale3dMapToScreen, yScale3dMapToScreen, BLUE);
+    renderLineOn2dMap(playerLocation3dMap, playerMinFovAngleUnitVectorFrom3dMapLocation, xScale3dMapToScreen, yScale3dMapToScreen, BLUE);
 
-    double maxFovSlope = tan(atan(slope) + HALF_FOV_RADIANS);
-    double minFovSlope = tan(atan(slope) - HALF_FOV_RADIANS);
     
     renderMap2dRepresentation(map2dRepresentation);
     renderPlayerOn2dMap(playerLocation3dMap, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, 4, 4);
     renderLineOn2dMap(playerLocation3dMap, playerUnitVectorFrom3dMapLocation, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, DARK_RED);
+    renderLineOn2dMap(playerLocation3dMap, playerMaxFovAngleUnitVectorFrom3dMapLocation, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, BLUE);
+    renderLineOn2dMap(playerLocation3dMap, playerMinFovAngleUnitVectorFrom3dMapLocation, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, BLUE);
 
     renderMouseRect();
 

@@ -16,16 +16,6 @@ void drawVertLine(int x, int y, int h) {
     SDL_RenderDrawLine(app.renderer, x, y, x, y+h);
 }
 
-void drawRect(int x, int y) {
-    SDL_Rect rect;
-    rect.x = x;
-    rect.y = y;
-    rect.w = GRID_WIDTH;
-    rect.h = GRID_HEIGHT;
-    
-    SDL_RenderDrawRect(app.renderer, &rect);
-}
-
 /*
 Draw vertically parallel trapezoid from x_lt to x_rt-- Left to Right.
 */

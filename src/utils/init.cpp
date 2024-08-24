@@ -41,7 +41,10 @@ void initSDL(void)
         exit(1);
     }
 
-    font = TTF_OpenFont("include/adobe-fonts/source-code-pro/TTF/SourceCodePro-Regular.ttf", 24);
+    font = TTF_OpenFont(
+        "include/adobe-fonts/source-code-pro/TTF/SourceCodePro-Regular.ttf", 
+        DEFAULT_FONT_PTSIZE
+    );
     if (!font){
         printf("Unable to get font: %s\n", TTF_GetError());
         return;

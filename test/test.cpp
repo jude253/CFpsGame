@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
+#include <iostream>
 
 
 void printfExamples() {
@@ -42,13 +43,37 @@ void printPoint(Point point) {
 
 Point LIST_OF_POINTS[100];
 
-/*
-Run with:
-gcc test/test.cpp -o test.out && ./test.out
-*/
+typedef struct {
+    int width;
+    int height;
+    char mapRepresentation[10][10];
+} Map;
+
+char mapRepresentation[10][10] = {
+    {'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+    {'X', '.', '.', '.', '.', '.', '.', '.', '.', 'X'},
+    {'X', '.', '.', '.', '.', '.', '.', '.', '.', 'X'},
+    {'X', '.', '.', '.', '.', '.', '.', '.', '.', 'X'},
+    {'X', '.', '.', '.', '.', '.', '.', '.', '.', 'X'},
+    {'X', '.', '.', '.', '.', '.', '.', '.', '.', 'X'},
+    {'X', '.', '.', '.', '.', '.', '.', '.', '.', 'X'},
+    {'X', '.', '.', '.', '.', '.', '.', '.', '.', 'X'},
+    {'X', '.', '.', '.', '.', '.', '.', '.', '.', 'X'},
+    {'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'},
+};
+
 int main() {
-    for (int i = 0; i < 100; i++) {
-        printPoint(LIST_OF_POINTS[i]);
+    Map map;
+
+    map.width = 10;
+    map.height = 10;
+
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++){
+            map.mapRepresentation[i][j] = mapRepresentation[i][j];
+            std::cout << map.mapRepresentation[i][j];
+        }
+        std::cout << '\n';
     }
     return 0;
 }

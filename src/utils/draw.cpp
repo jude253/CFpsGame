@@ -339,8 +339,6 @@ void presentScene(void)
         drawCol.h = -SCREEN_HEIGHT/dist*30;
         SDL_RenderFillRect(app.renderer, &drawCol);
     }
-    std::cout << dist << '\n';
-
     renderMap2dRepresentation(app.map2dRepresentation);
     
     renderPlayerOn2dMap(playerLocation3dMap, X_SCALE_3D_MAP_TO_MINIMAP, Y_SCALE_3D_MAP_TO_MINIMAP, 4, 4);

@@ -153,9 +153,67 @@ bool isOpenGrid(char map2dRepresentation[MAP_HEIGHT][MAP_WIDTH], SDL_Point map2d
     return map2dRepresentation[map2dIndex.y][map2dIndex.x] != 'X';
 }
 
+/**
+ * Remove scaling and only do it against grid once certain that it works
+ * with required functionality.  Also, there could be room for
+ * optimization in checking points.
+ */
+SDL_Point castRay(
+    char map2dRepresentation[MAP_HEIGHT][MAP_WIDTH], 
+    SDL_Point startPoint3dMap, 
+    double angle,
+    int stepSize,
+    float xScale,
+    float yScale
+) {
+
+    double playerXComponent = cos(angle);
+    double playerYComponent = sin(angle);
+
+    SDL_Point prevPlayerLineOf3dMapPoint = {
+        .x = startPoint3dMap.x,
+        .y = startPoint3dMap.y,
+    };
+    SDL_Point playerLineOf3dMapPoint;
+    SDL_Point playerLineOfSightScreenPoint;
+
+    setRenderDrawColor(RED);
+    for (int i = 0; i < 1000; i++) {
+        playerLineOf3dMapPoint = {
+            .x = (int) (i * stepSize * playerXComponent + (double) startPoint3dMap.x),
+            .y = (int) (i * stepSize * playerYComponent + (double) startPoint3dMap.y)
+        };
+        
+        if (!isOpenGrid(app.map2dRepresentation, {
+            .x = (int)round(playerLineOf3dMapPoint.x/CELL_3D_EDGE_SIZE),
+            .y = (int)round(playerLineOf3dMapPoint.y/CELL_3D_EDGE_SIZE)
+        }))
+            break;
+
+        playerLineOfSightScreenPoint = createScaledPoint(
+            playerLineOf3dMapPoint, xScale, yScale
+        );
+        
+        setRenderDrawColor(RED);
+        SDL_RenderDrawPoint(
+            app.renderer, 
+            playerLineOfSightScreenPoint.x, 
+            playerLineOfSightScreenPoint.y
+        );
+        prevPlayerLineOf3dMapPoint = {
+            .x = playerLineOf3dMapPoint.x,
+            .y = playerLineOf3dMapPoint.y
+        };
+    }
+
+    return prevPlayerLineOf3dMapPoint;
+
+
+}
 
 void presentScene(void)
 {   
+    renderMap2dRepresentationFitToScreen(app.map2dRepresentation);
 
     // TODO: Make these macros potentially
     float xScaleScreenTo3dMap = (float)CELL_3D_EDGE_SIZE*(float)MAP_WIDTH/(float)SCREEN_WIDTH;
@@ -204,32 +262,23 @@ void presentScene(void)
         );
     }
 
-    // double maxFovAngle = playerAngle + HALF_FOV_RADIANS;
-    // double minFovAngle = playerAngle - HALF_FOV_RADIANS;
+    double minFovAngle = playerAngle - HALF_FOV_RADIANS;
 
-    // SDL_Point playerMaxFovAngleUnitVectorFrom3dMapLocation = {
-    //     .x = (int) (CELL_3D_EDGE_SIZE * cos(maxFovAngle) + (double) playerLocation3dMap.x), 
-    //     .y = (int) (CELL_3D_EDGE_SIZE * sin(maxFovAngle) + (double) playerLocation3dMap.y)
-    // };
+    // Seems to handle up to about 1000 rays without dropping frames on my computer.
+    int numberOfRays = 100;
+    double rayAngle;
+    for (int i = 0; i < numberOfRays; i++) {
+        rayAngle = minFovAngle + i * (FOV_RADIANS / (double) numberOfRays);
+        castRay(app.map2dRepresentation, playerLocation3dMap, rayAngle, 10, xScale3dMapToScreen, yScale3dMapToScreen);
+    }
 
-    // SDL_Point playerMinFovAngleUnitVectorFrom3dMapLocation = {
-    //     .x = (int) (CELL_3D_EDGE_SIZE * cos(minFovAngle) + (double) playerLocation3dMap.x), 
-    //     .y = (int) (CELL_3D_EDGE_SIZE * sin(minFovAngle) + (double) playerLocation3dMap.y)
-    // };
-
-
-    renderMap2dRepresentationFitToScreen(app.map2dRepresentation);
     renderPlayerOn2dMap(playerLocation3dMap, xScale3dMapToScreen, yScale3dMapToScreen, 10, 10);
     renderLineOn2dMap(playerLocation3dMap, playerUnitVectorFrom3dMapLocation, xScale3dMapToScreen, yScale3dMapToScreen, DARK_RED);
-    // renderLineOn2dMap(playerLocation3dMap, playerMaxFovAngleUnitVectorFrom3dMapLocation, xScale3dMapToScreen, yScale3dMapToScreen, BLUE);
-    // renderLineOn2dMap(playerLocation3dMap, playerMinFovAngleUnitVectorFrom3dMapLocation, xScale3dMapToScreen, yScale3dMapToScreen, BLUE);
 
-    
     renderMap2dRepresentation(app.map2dRepresentation);
+    
     renderPlayerOn2dMap(playerLocation3dMap, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, 4, 4);
     renderLineOn2dMap(playerLocation3dMap, playerUnitVectorFrom3dMapLocation, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, DARK_RED);
-    // renderLineOn2dMap(playerLocation3dMap, playerMaxFovAngleUnitVectorFrom3dMapLocation, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, BLUE);
-    // renderLineOn2dMap(playerLocation3dMap, playerMinFovAngleUnitVectorFrom3dMapLocation, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, BLUE);
 
     renderFPS();
 

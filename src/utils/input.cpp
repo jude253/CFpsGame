@@ -6,7 +6,19 @@
 #include <iostream>
 #include "defs.h"
 
+void updatePlayerLocationForward(void) {
+    double newX = app.playerPosition3dMap.x + cos(app.playerAngle)*PLAYER_MOVE_3D_STEP;
+    double newY = app.playerPosition3dMap.y + sin(app.playerAngle)*PLAYER_MOVE_3D_STEP;
+    app.playerPosition3dMap.x = newX;
+    app.playerPosition3dMap.y = newY;
+}
 
+void updatePlayerLocationBackward(void) {
+    double newX = app.playerPosition3dMap.x - cos(app.playerAngle)*PLAYER_MOVE_3D_STEP;
+    double newY = app.playerPosition3dMap.y - sin(app.playerAngle)*PLAYER_MOVE_3D_STEP;
+    app.playerPosition3dMap.x = newX;
+    app.playerPosition3dMap.y = newY;
+}
 
 void doInput(void)
 {
@@ -44,19 +56,25 @@ void doInput(void)
                 case SDLK_RIGHT:
                         app.playerAngle += PLAYER_ROTATE_3D_STEP;
                     break;
-                
-                // MOVEMENT
-                case SDLK_w:
-                        app.playerPosition3dMap.y -= PLAYER_MOVE_3D_STEP;
-                    break;
                 case SDLK_a:
-                        app.playerPosition3dMap.x -= PLAYER_MOVE_3D_STEP;
-                    break;
-                case SDLK_s:
-                        app.playerPosition3dMap.y += PLAYER_MOVE_3D_STEP;
+                        app.playerAngle -= PLAYER_ROTATE_3D_STEP;
                     break;
                 case SDLK_d:
-                        app.playerPosition3dMap.x += PLAYER_MOVE_3D_STEP;
+                        app.playerAngle += PLAYER_ROTATE_3D_STEP;
+                    break;
+
+                // MOVEMENT
+                case SDLK_UP:
+                        updatePlayerLocationForward();
+                    break;
+                case SDLK_DOWN:
+                        updatePlayerLocationBackward();
+                    break;
+                case SDLK_w:
+                        updatePlayerLocationForward();
+                    break;
+                case SDLK_s:
+                        updatePlayerLocationBackward();
                     break;
                 default:
                     break;

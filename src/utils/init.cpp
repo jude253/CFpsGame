@@ -11,9 +11,12 @@ Color RED                =   {.r = 255, .g=0,   .b=0,   .a=255};
 Color DARK_RED           =   {.r = 96,  .g=0,   .b=0,   .a=255};
 Color BLUE               =   {.r = 0,   .g=0,   .b=255, .a=255};
 Color GREEN              =   {.r = 0,   .g=255, .b=0,   .a=255};
-Color YELLOW             =   {.r = 255,   .g=255, .b=0,   .a=255};
+Color YELLOW             =   {.r = 255, .g=255, .b=0,   .a=255};
 Color WHITE              =   {.r = 255, .g=255, .b=255, .a=255};
 Color BLACK              =   {.r = 0,   .g=0,   .b=0,   .a=255};
+Color BLACK_75_PERC      =   {.r = 0,   .g=0,   .b=192, .a=255};
+Color BLACK_50_PERC      =   {.r = 0,   .g=0,   .b=128, .a=255};
+Color BLACK_25_PERC      =   {.r = 0,   .g=0,   .b=64,  .a=255};
 Color BACKGROUND_COLOR   =   {.r = 96,  .g=128, .b=255, .a=255};
 
 void initSDL(void)
@@ -37,13 +40,13 @@ void initSDL(void)
     std::string map2dRepresentation[MAP_HEIGHT] = {
         "XXXXXXXXXX",
         "X........X",
+        "X..XXXX..X",
+        "X..XXX...X",
+        "X..XXX...X",
+        "X..XXXX..X",
+        "X..XXXX..X",
+        "X..XXXX..X",
         "X........X",
-        "X........X",
-        "X........X",
-        "X........X",
-        "X........X",
-        "X........X",
-        "X......XXX",
         "X....XXXXX",
         "XX....XXXX",
         "XXXXXXXXXX",

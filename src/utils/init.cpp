@@ -2,6 +2,7 @@
 #include <SDL_ttf.h>
 #include "defs.h"
 #include "structs.h"
+#include <string>
 
 App app;
 TTF_Font *font;
@@ -10,6 +11,7 @@ Color RED                =   {.r = 255, .g=0,   .b=0,   .a=255};
 Color DARK_RED           =   {.r = 96,  .g=0,   .b=0,   .a=255};
 Color BLUE               =   {.r = 0,   .g=0,   .b=255, .a=255};
 Color GREEN              =   {.r = 0,   .g=255, .b=0,   .a=255};
+Color YELLOW             =   {.r = 255,   .g=255, .b=0,   .a=255};
 Color WHITE              =   {.r = 255, .g=255, .b=255, .a=255};
 Color BLACK              =   {.r = 0,   .g=0,   .b=0,   .a=255};
 Color BACKGROUND_COLOR   =   {.r = 96,  .g=128, .b=255, .a=255};
@@ -31,6 +33,27 @@ void initSDL(void)
 
     app.playerPosition3dMap = {.x = 850, .y = 200};
     app.playerAngle = 0.0;
+
+    std::string map2dRepresentation[MAP_HEIGHT] = {
+        "XXXXXXXXXX",
+        "X........X",
+        "X........X",
+        "X........X",
+        "X........X",
+        "X........X",
+        "X........X",
+        "X........X",
+        "X......XXX",
+        "X....XXXXX",
+        "XX....XXXX",
+        "XXXXXXXXXX",
+    };
+
+    for (int y = 0; y < MAP_HEIGHT; y++) {
+        for (int x = 0; x < map2dRepresentation[y].length(); x++){
+            app.map2dRepresentation[y][x] = map2dRepresentation[y][x];
+        }
+    }
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {

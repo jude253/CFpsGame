@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL.h>
+#include "defs.h"
 
 typedef struct {
     SDL_Renderer *renderer;
@@ -13,6 +14,7 @@ typedef struct {
     SDL_Point mousePosition;
     SDL_Point playerPosition3dMap;  // Player location relative to the 3d coordinate grid system.
     double playerAngle;  // Radians
+    char map2dRepresentation[MAP_HEIGHT][MAP_WIDTH];
 } App;
 
 typedef struct {

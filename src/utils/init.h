@@ -11,6 +11,7 @@ extern Color RED;
 extern Color DARK_RED;
 extern Color BLUE;
 extern Color GREEN;
+extern Color YELLOW;
 extern Color WHITE;
 extern Color BLACK;
 extern Color BACKGROUND_COLOR;

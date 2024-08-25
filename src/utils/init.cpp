@@ -35,7 +35,7 @@ void initSDL(void)
     app.fps = 0.0f;
 
     app.playerPosition3dMap = {.x = 850, .y = 200};
-    app.playerAngle = 0.0;
+    app.playerAngle = PI/2.0;
 
     std::string map2dRepresentation[MAP_HEIGHT] = {
         "XXXXXXXXXX",

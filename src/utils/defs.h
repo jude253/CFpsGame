@@ -26,7 +26,7 @@
 
 
 #define PLAYER_MOVE_3D_STEP 30
-#define PLAYER_ROTATE_3D_STEP PI/8.0  // Radians
+#define PLAYER_ROTATE_3D_STEP PI/16.0  // Radians
 
 #define X_SCALE_S_TO_3D_MAP (float)CELL_3D_EDGE_SIZE*(float)MAP_WIDTH/(float)SCREEN_WIDTH // Scale in x direction: screen coordinates to 3d map coordinates
 #define Y_SCALE_S_TO_3D_MAP (float)CELL_3D_EDGE_SIZE*(float)MAP_HEIGHT/(float)SCREEN_HEIGHT // Scale in y direction: screen coordinates to 3d map coordinates

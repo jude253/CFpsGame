@@ -312,8 +312,6 @@ void presentScene(void)
     // render2dMapFitToScreenDebug(playerUnitVectorFrom3dMapLocation);
 
     // BUG: why does it not display all columns if numberOfRays = 100?
-    // BUG: why does it seem like the far corners don't show anything?
-    // BUG: make it less boxy
     int numberOfRays = 256;
     int colWidth = (double) SCREEN_WIDTH / (double) numberOfRays;
     SDL_Rect drawCol;
@@ -327,7 +325,10 @@ void presentScene(void)
         drawCol.x = i*colWidth;
         drawCol.y = SCREEN_HEIGHT/2;
         drawCol.w = colWidth;
-        drawCol.h = SCREEN_HEIGHT/dist*30;
+
+        // Make the numerator bigger to allow more percision after division
+        // and truncation for casting to int.
+        drawCol.h = (int) ((double) SCREEN_HEIGHT * 100.0 * 30.0 / (double) dist) / 100;
         setRenderDrawColor({
             .r = BLACK.r,
             .g = BLACK.g,
@@ -336,7 +337,7 @@ void presentScene(void)
         });
 
         SDL_RenderFillRect(app.renderer, &drawCol);
-        drawCol.h = -SCREEN_HEIGHT/dist*30;
+        drawCol.h = -drawCol.h;
         SDL_RenderFillRect(app.renderer, &drawCol);
     }
     renderMap2dRepresentation(app.map2dRepresentation);

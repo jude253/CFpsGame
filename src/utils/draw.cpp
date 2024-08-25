@@ -113,8 +113,7 @@ void renderLineOn2dMap(SDL_Point pt1, SDL_Point pt2, float xScale, float yScale,
     );
 }
 
-
-void renderSquareOn2dMap(SDL_Point centerPoint, float xScale, float yScale, int width, Color color) {
+void renderCenteredSquareOn2dMap(SDL_Point centerPoint, float xScale, float yScale, int width, Color color) {
     SDL_Point scaledCenterPoint = createScaledPoint(centerPoint, xScale, yScale);
     SDL_Rect square;
     square.x = scaledCenterPoint.x - width/2;
@@ -126,26 +125,34 @@ void renderSquareOn2dMap(SDL_Point centerPoint, float xScale, float yScale, int 
     SDL_RenderDrawRect(app.renderer, &square);
 }
 
+void renderRectOn2dMap(SDL_Point point, float xScale, float yScale, int width, int height, Color color) {
+    SDL_Point scaledPoint = createScaledPoint(point, xScale, yScale);
+    SDL_Rect rect;
+    rect.x = scaledPoint.x;
+    rect.y = scaledPoint.y;
+    rect.w = width;
+    rect.h = height;
+
+    setRenderDrawColor(color);
+    SDL_RenderDrawRect(app.renderer, &rect);
+}
+
 void printPoint(SDL_Point point) {
     std::cout << '(' << point.x << ',' << point.y << ')' << '\n';
 }
 
-SDL_Point getFirstIntersectionPoint(char map2dRepresentation[MAP_HEIGHT][MAP_WIDTH], 
-    SDL_Point start, double angle, int stepSize) 
-{   
-    double xUnitComponent = cos(angle);
-    double yUnitComponent = sin(angle);
-    double xCoordinate;
-    double yCoordinate;
-    for (int i = 1; i < 3; i++) {
-        xCoordinate = (double) i * stepSize * xUnitComponent + (double) start.x;
-        yCoordinate = (double) i * stepSize * yUnitComponent + (double) start.y;
-        // std::cout << '(' << xCoordinate << ',' << yCoordinate << ')';
-    }
-    // std::cout << '\n';
 
-    return {.x = (int) xCoordinate, .y = (int) yCoordinate};
+bool isOpenGrid(char map2dRepresentation[MAP_HEIGHT][MAP_WIDTH], SDL_Point map2dIndex) {
+    // Add extra bounds check just to be sure, even at the cost of performance.
+    if ( 
+        map2dIndex.x > MAP_WIDTH  || map2dIndex.x < 0 || 
+        map2dIndex.y > MAP_HEIGHT || map2dIndex.y < 0
+    )
+        return false;
+
+    return map2dRepresentation[map2dIndex.y][map2dIndex.x] != 'X';
 }
+
 
 void presentScene(void)
 {   
@@ -162,54 +169,67 @@ void presentScene(void)
 
     SDL_Point playerLocation3dMap = app.playerPosition3dMap;
 
-
     double playerAngle = app.playerAngle;
-    double slope = tan(app.playerAngle);
+    double playerXComponent = cos(playerAngle);
+    double playerYComponent = sin(playerAngle);
 
     SDL_Point playerUnitVectorFrom3dMapLocation = {
-        .x = (int) (CELL_3D_EDGE_SIZE * cos(playerAngle) + (double) playerLocation3dMap.x), 
-        .y = (int) (CELL_3D_EDGE_SIZE * sin(playerAngle) + (double) playerLocation3dMap.y)
+        .x = (int) (10 * playerXComponent + (double) playerLocation3dMap.x), 
+        .y = (int) (10 * playerYComponent + (double) playerLocation3dMap.y)
     };
+    
+    SDL_Point playerLineOf3dMap;
+    SDL_Point playerLineOfSightScreen;
 
-    double maxFovAngle = playerAngle + HALF_FOV_RADIANS;
-    double minFovAngle = playerAngle - HALF_FOV_RADIANS;
+    setRenderDrawColor(RED);
+    for (int i = 0; i < 1000; i++) {
+        playerLineOf3dMap = {
+            .x = (int) (i * 10 * playerXComponent + (double) playerLocation3dMap.x),
+            .y = (int) (i * 10 * playerYComponent + (double) playerLocation3dMap.y)
+        };
+        playerLineOfSightScreen = createScaledPoint(
+            playerLineOf3dMap, xScale3dMapToScreen, yScale3dMapToScreen
+        );
+        if (!isOpenGrid(app.map2dRepresentation, {
+            .x = (int)round(playerLineOf3dMap.x/CELL_3D_EDGE_SIZE),
+            .y = (int)round(playerLineOf3dMap.y/CELL_3D_EDGE_SIZE)
+        }))
+            break;
+        
+        setRenderDrawColor(RED);
+        SDL_RenderDrawPoint(
+            app.renderer, 
+            playerLineOfSightScreen.x, 
+            playerLineOfSightScreen.y
+        );
+    }
 
-    SDL_Point playerMaxFovAngleUnitVectorFrom3dMapLocation = {
-        .x = (int) (CELL_3D_EDGE_SIZE * cos(maxFovAngle) + (double) playerLocation3dMap.x), 
-        .y = (int) (CELL_3D_EDGE_SIZE * sin(maxFovAngle) + (double) playerLocation3dMap.y)
-    };
+    // double maxFovAngle = playerAngle + HALF_FOV_RADIANS;
+    // double minFovAngle = playerAngle - HALF_FOV_RADIANS;
 
-    SDL_Point playerMinFovAngleUnitVectorFrom3dMapLocation = {
-        .x = (int) (CELL_3D_EDGE_SIZE * cos(minFovAngle) + (double) playerLocation3dMap.x), 
-        .y = (int) (CELL_3D_EDGE_SIZE * sin(minFovAngle) + (double) playerLocation3dMap.y)
-    };
+    // SDL_Point playerMaxFovAngleUnitVectorFrom3dMapLocation = {
+    //     .x = (int) (CELL_3D_EDGE_SIZE * cos(maxFovAngle) + (double) playerLocation3dMap.x), 
+    //     .y = (int) (CELL_3D_EDGE_SIZE * sin(maxFovAngle) + (double) playerLocation3dMap.y)
+    // };
+
+    // SDL_Point playerMinFovAngleUnitVectorFrom3dMapLocation = {
+    //     .x = (int) (CELL_3D_EDGE_SIZE * cos(minFovAngle) + (double) playerLocation3dMap.x), 
+    //     .y = (int) (CELL_3D_EDGE_SIZE * sin(minFovAngle) + (double) playerLocation3dMap.y)
+    // };
 
 
     renderMap2dRepresentationFitToScreen(app.map2dRepresentation);
     renderPlayerOn2dMap(playerLocation3dMap, xScale3dMapToScreen, yScale3dMapToScreen, 10, 10);
     renderLineOn2dMap(playerLocation3dMap, playerUnitVectorFrom3dMapLocation, xScale3dMapToScreen, yScale3dMapToScreen, DARK_RED);
-    renderLineOn2dMap(playerLocation3dMap, playerMaxFovAngleUnitVectorFrom3dMapLocation, xScale3dMapToScreen, yScale3dMapToScreen, BLUE);
-    renderLineOn2dMap(playerLocation3dMap, playerMinFovAngleUnitVectorFrom3dMapLocation, xScale3dMapToScreen, yScale3dMapToScreen, BLUE);
+    // renderLineOn2dMap(playerLocation3dMap, playerMaxFovAngleUnitVectorFrom3dMapLocation, xScale3dMapToScreen, yScale3dMapToScreen, BLUE);
+    // renderLineOn2dMap(playerLocation3dMap, playerMinFovAngleUnitVectorFrom3dMapLocation, xScale3dMapToScreen, yScale3dMapToScreen, BLUE);
 
     
     renderMap2dRepresentation(app.map2dRepresentation);
     renderPlayerOn2dMap(playerLocation3dMap, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, 4, 4);
     renderLineOn2dMap(playerLocation3dMap, playerUnitVectorFrom3dMapLocation, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, DARK_RED);
-    renderLineOn2dMap(playerLocation3dMap, playerMaxFovAngleUnitVectorFrom3dMapLocation, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, BLUE);
-    renderLineOn2dMap(playerLocation3dMap, playerMinFovAngleUnitVectorFrom3dMapLocation, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, BLUE);
-
-    SDL_Point testPt = getFirstIntersectionPoint(
-        app.map2dRepresentation, playerLocation3dMap, playerAngle, CELL_3D_EDGE_SIZE
-    );
-
-    renderSquareOn2dMap(testPt, xScale3dMapToScreen, yScale3dMapToScreen, 10, GREEN);
-
-    SDL_Point testPtTruncated = {
-        .x = (int)round(testPt.x/CELL_3D_EDGE_SIZE)*CELL_3D_EDGE_SIZE,
-        .y = (int)round(testPt.y/CELL_3D_EDGE_SIZE)*CELL_3D_EDGE_SIZE,
-    };
-    printPoint(testPtTruncated);
-    renderSquareOn2dMap(testPtTruncated, xScale3dMapToScreen, yScale3dMapToScreen, 10, YELLOW);
+    // renderLineOn2dMap(playerLocation3dMap, playerMaxFovAngleUnitVectorFrom3dMapLocation, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, BLUE);
+    // renderLineOn2dMap(playerLocation3dMap, playerMinFovAngleUnitVectorFrom3dMapLocation, xScale3dMapTo2dMiniMap, xScale3dMapTo2dMiniMap, BLUE);
 
     renderFPS();
 

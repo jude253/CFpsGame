@@ -11,7 +11,7 @@
 #define CELL_2D_HEIGHT_FTS_SIZE SCREEN_HEIGHT/MAP_HEIGHT // 2D cell height to fill screen
 
 #define CELL_2D_EDGE_SIZE 10  // Cell width and height size for 2d square representation
-#define CELL_3D_EDGE_SIZE 200  // Cell width and height size for 3d square representation
+#define CELL_3D_EDGE_SIZE 100  // Cell width and height size for 3d square representation
 
 #define TARGET_FPS 60
 #define TARGET_SECONDS_PER_FRAME 1.0f/TARGET_FPS
